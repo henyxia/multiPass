@@ -31,8 +31,8 @@ int ui_init()
 		return 1;
 	}
 
-	uiconf->hsize = 30;
-	uiconf->wsize = 80;
+	uiconf->hsize = 36;
+	uiconf->wsize = 128;
 	uiconf->wpanel	= 15;
 
 	return 0;
@@ -45,7 +45,7 @@ void drawUI()
 	// First
 	for(int i=0; i<uiconf->wsize; i++)
 		putchar('-');
-	printf("\n");
+	putchar('\n');
 
 	// Body
 	for(int j=2; j<uiconf->hsize; j++)
@@ -56,12 +56,12 @@ void drawUI()
 		putchar(i == uiconf->wpanel ? '|' : ' ');
 	}
 	putchar('|');
-	printf("\n");
+	putchar('\n');
 	}
 
 	// Last
 	for(int i=0; i<uiconf->wsize; i++)
 		putchar('-');
-	printf("\n");
+	putchar('\n');
 }
 
