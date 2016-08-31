@@ -40,6 +40,8 @@ int ui_init()
 
 void drawUI()
 {
+	// Clear
+	printf("\x1b[0H");
 	//printf("%s\n", HOME);
 
 	// First
@@ -48,6 +50,7 @@ void drawUI()
 	putchar('\n');
 
 	// Body
+	/*
 	for(int j=2; j<uiconf->hsize; j++)
 	{
 	putchar('|');
@@ -58,8 +61,11 @@ void drawUI()
 	putchar('|');
 	putchar('\n');
 	}
+	*/
 
 	// Last
+	printf("\x1b[%d;0H", uiconf->hsize-2);
+	printf("\x1b[7m\u2190\x1b[0m");
 	for(int i=0; i<uiconf->wsize; i++)
 		putchar('-');
 	putchar('\n');
