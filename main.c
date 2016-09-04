@@ -1,20 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include <unistd.h>
+#include <pthread.h>
 
 #include "common.h"
 #include "ui.h"
 
-char lastMessage[255];
-
-void setLastMessage(const char* mes)
-{
-	strcpy(lastMessage, mes);
-}
-
 int main(void)
 {
-	int ret;
+	int			ret;
+	pthread_t	t_ui;
 
 	// Creating the common data
 	commonData* comm = NULL;
@@ -24,6 +19,7 @@ int main(void)
 		printf("Unalble to allocate the common data\n");
 		return 1;
 	}
+	comm->threadStarted = 0;
 
 	// Init UI
 	ret = ui_init(comm);
@@ -32,11 +28,30 @@ int main(void)
 		printf("Unable to init the UI properly\n");
 		return ret;
 	}
+	comm->threadStarted++;
 
-	setLastMessage("Starting server\n");
+	// Init status fd
+	ret = pipe(comm->fd_status);
+	if(ret<0)
+	{
+		printf("Unable to create status fd\n");
+		return ret;
+	}
 
 	// Starting the UI thread
-	drawUI();
+	pthread_attr_t attr;
+	pthread_attr_init(&attr);
+	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+	ret = pthread_create(&t_ui, &attr, ui_thread, comm);
+	if(ret)
+	{
+		printf("Unable to create the UI thread\n");
+		return ret;
+	}
+
+	// Now let it run
+	while(comm->threadStarted > 0)
+		sleep(1);
 
 	// Cleaning
 	free(comm);

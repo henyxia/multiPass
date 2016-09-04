@@ -3,6 +3,7 @@
 
 CC=gcc
 CFLAGS=-c -Wall -std=c99 -g
+LIBS=-lpthread
 SOURCES=main.c ui.c
 OBJECTS=$(SOURCES:.c=.o)
 EXECUTABLE=multiPass

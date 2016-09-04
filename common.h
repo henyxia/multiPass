@@ -3,7 +3,8 @@
 
 typedef struct
 {
-	int		fd_error;
+	int		threadStarted;
+	int		fd_status[2];
 
 	int		hsize;
 	int 	wsize;

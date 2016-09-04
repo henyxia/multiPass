@@ -1,31 +1,21 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <termios.h>
+#include <stdbool.h>
 #include <sys/ioctl.h>
+#include <sys/select.h>
 
 #include "ui.h"
 #include "version.h"
 
-typedef struct
-{
-	int		hsize;
-	int 	wsize;
-	int 	wpanel;
-	int	 	hdetails;
-} ui_config;
-
-typedef struct
-{
-	char		name[64];
-} command;
-
-commonData* uiconf = NULL;
+// Private functions
+void drawUI(commonData*);
+void updateContent(commonData*);
 
 int ui_init(commonData* comm)
 {
-	uiconf = comm;
-
-	if(uiconf == NULL)
+	if(comm == NULL)
 	{
 		printf("Unable to initialize the UI configuration\n");
 		return 1;
@@ -34,17 +24,30 @@ int ui_init(commonData* comm)
 	struct winsize w;
 	ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
 
-	uiconf->hsize	= w.ws_row;
-	uiconf->wsize	= w.ws_col;
-	uiconf->wpanel	= 25;
+	comm->hsize	= w.ws_row;
+	comm->wsize	= w.ws_col;
+	comm->wpanel = 25;
 
 	return 0;
 }
 
-void drawUI()
+void* ui_thread(void* uiconf_raw)
+{
+	commonData* uiconf = uiconf_raw;
+
+	drawUI(uiconf);
+
+	updateContent(uiconf);
+
+	uiconf->threadStarted--;
+
+	return NULL;
+}
+
+void drawUI(commonData* uiconf)
 {
 	// Clear
-	printf("\x1b[2J\x1b[0H");
+	printf("\x1b[?25l\x1b[2J\x1b[0H");
 
 	// Coloring
 	printf("\x1b[37;44m");
@@ -93,8 +96,31 @@ void drawUI()
 	printf("\x1b[1;3H\u2524 mutliPass %d.%d \u251C", VERSION_MAJOR,
 			VERSION_MINOR);
 
-	// Temp final display
-	printf("\x1b[%d;0H", uiconf->hsize);
-	putchar('\n');
+	fflush(stdout);
 }
 
+void updateContent(commonData* uiconf)
+{
+	// Vars
+	bool			stop = false;
+	fd_set			rfds;
+	struct termios	old = { 0 };
+
+	// Setting the terminal properly
+    if(tcgetattr(0, &old)<0)
+        perror("tcsetattr()");
+    old.c_lflag&=~ICANON;
+   	old.c_lflag &= ~ECHO;
+    old.c_cc[VMIN]=1;
+    old.c_cc[VTIME]=0;
+    if(tcsetattr(0, TCSANOW, &old)<0)
+        perror("tcsetattr ICANON");
+
+	while(!stop)
+	{
+		FD_ZERO(&rfds);
+		FD_SET(STDIN_FILENO, &rfds);
+
+		select(1, &rfds, NULL, NULL, NULL);
+	}
+}

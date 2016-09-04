@@ -4,6 +4,6 @@
 #include "common.h"
 
 int		ui_init(commonData*);
-void 	drawUI();
+void*	ui_thread(void*);
 
 #endif
