@@ -105,6 +105,7 @@ void updateContent(commonData* uiconf)
 	bool			stop = false;
 	fd_set			rfds;
 	struct termios	old = { 0 };
+	int				max;
 
 	// Setting the terminal properly
     if(tcgetattr(0, &old)<0)
@@ -116,11 +117,23 @@ void updateContent(commonData* uiconf)
     if(tcsetattr(0, TCSANOW, &old)<0)
         perror("tcsetattr ICANON");
 
+	FD_ZERO(&rfds);
+	FD_SET(STDIN_FILENO, &rfds);
+	FD_SET(uiconf->fd_status[0], &rfds);
+	max = uiconf->fd_status[0] + 1;
+
 	while(!stop)
 	{
-		FD_ZERO(&rfds);
 		FD_SET(STDIN_FILENO, &rfds);
+		FD_SET(uiconf->fd_status[0], &rfds);
 
 		select(1, &rfds, NULL, NULL, NULL);
+
+		if(FD_ISSET(uiconf->fd_status[0], &rfds))
+		{
+			printf("BLBLBLLBLB\n");
+		}
+
+		FD_ZERO(&rfds);
 	}
 }

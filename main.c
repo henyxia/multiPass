@@ -49,6 +49,15 @@ int main(void)
 		return ret;
 	}
 
+	// Sending the status
+	FILE* f_status = fdopen(comm->fd_status[1], "w");
+	if(f_status == NULL)
+	{
+		printf("Unable to open FILE to status\n");
+		return 1;
+	}
+	fprintf(f_status, "UI thread successfully initialized");
+
 	// Now let it run
 	while(comm->threadStarted > 0)
 		sleep(1);
