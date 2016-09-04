@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <sys/ioctl.h>
 
 #include "ui.h"
 #include "version.h"
@@ -29,8 +31,11 @@ int ui_init()
 		return 1;
 	}
 
-	uiconf->hsize	= 36;
-	uiconf->wsize	= 128;
+	struct winsize w;
+	ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+
+	uiconf->hsize	= w.ws_row;
+	uiconf->wsize	= w.ws_col;
 	uiconf->wpanel	= 25;
 
 	return 0;
