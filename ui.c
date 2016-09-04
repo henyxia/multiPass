@@ -19,11 +19,11 @@ typedef struct
 	char		name[64];
 } command;
 
-ui_config* uiconf = NULL;
+commonData* uiconf = NULL;
 
-int ui_init()
+int ui_init(commonData* comm)
 {
-	uiconf = (ui_config*) malloc( sizeof( ui_config ) );
+	uiconf = comm;
 
 	if(uiconf == NULL)
 	{

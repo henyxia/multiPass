@@ -1,7 +1,9 @@
 #ifndef __UI_H__
 #define __UI_H__
 
-int		ui_init();
+#include "common.h"
+
+int		ui_init(commonData*);
 void 	drawUI();
 
 #endif
