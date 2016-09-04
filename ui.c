@@ -2,9 +2,7 @@
 #include <stdlib.h>
 
 #include "ui.h"
-
-#define HOME 	"aaa"
-#define	CLEAR	"aaa"
+#include "version.h"
 
 typedef struct
 {
@@ -42,6 +40,9 @@ void drawUI()
 {
 	// Clear
 	printf("\x1b[2J\x1b[0H");
+
+	// Coloring
+	printf("\x1b[37;44m");
 
 	// First
 	printf("\u250C");
@@ -83,6 +84,12 @@ void drawUI()
 		printf("\u2500");
 	printf("\u2518");
 
+	// Title
+	printf("\x1b[1;3H\u2524 mutliPass %d.%d \u251C", VERSION_MAJOR,
+			VERSION_MINOR);
+
+	// Temp final display
+	printf("\x1b[%d;0H", uiconf->hsize);
 	putchar('\n');
 }
 
