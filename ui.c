@@ -31,9 +31,9 @@ int ui_init()
 		return 1;
 	}
 
-	uiconf->hsize = 36;
-	uiconf->wsize = 128;
-	uiconf->wpanel	= 15;
+	uiconf->hsize	= 36;
+	uiconf->wsize	= 128;
+	uiconf->wpanel	= 25;
 
 	return 0;
 }
@@ -41,33 +41,48 @@ int ui_init()
 void drawUI()
 {
 	// Clear
-	printf("\x1b[0H");
-	//printf("%s\n", HOME);
+	printf("\x1b[2J\x1b[0H");
 
 	// First
-	for(int i=0; i<uiconf->wsize; i++)
-		putchar('-');
+	printf("\u250C");
+	for(int i=1; i<(uiconf->wsize-1); i++)
+		printf("\u2500");
+	printf("\u2510");
 	putchar('\n');
 
-	// Body
-	/*
-	for(int j=2; j<uiconf->hsize; j++)
-	{
-	putchar('|');
+	// Left
+	for(int i=1; i<(uiconf->hsize-1); i++)
+		printf("\x1b[%d;1H\u2502", i+1);
+
+	// Right
+	for(int i=1; i<(uiconf->hsize-1); i++)
+		printf("\x1b[%d;%dH\u2502", i+1, uiconf->wsize);
+
+	// Top bar
+	printf("\x1b[4;0H\u251C");
 	for(int i=1; i<(uiconf->wsize-1); i++)
-	{
-		putchar(i == uiconf->wpanel ? '|' : ' ');
-	}
-	putchar('|');
-	putchar('\n');
-	}
-	*/
+		printf("\x1b[4;%dH\u2500", i+1);
+	printf("\x1b[4;%dH\u2524", uiconf->wsize);
+
+	// Bottom bar
+	printf("\x1b[%d;0H\u251C", uiconf->hsize-2);
+	for(int i=1; i<(uiconf->wsize-1); i++)
+		printf("\x1b[%d;%dH\u2500", uiconf->hsize-2, i+1);
+	printf("\x1b[%d;%dH\u2524", uiconf->hsize-2, uiconf->wsize);
+
+	// Panel
+	printf("\x1b[4;%dH\u252C", uiconf->wpanel+1);
+	for(int i=4; i<(uiconf->hsize-3); i++)
+		printf("\x1b[%d;%dH\u2502", i+1, uiconf->wpanel+1);
+	printf("\x1b[%d;%dH\u2534", uiconf->hsize-2, uiconf->wpanel+1);
 
 	// Last
-	printf("\x1b[%d;0H", uiconf->hsize-2);
-	printf("\x1b[7m\u2190\x1b[0m");
-	for(int i=0; i<uiconf->wsize; i++)
-		putchar('-');
+	printf("\x1b[%d;0H", uiconf->hsize);
+	printf("\u2514");
+	for(int i=1; i<(uiconf->wsize-1); i++)
+		printf("\u2500");
+	printf("\u2518");
+
 	putchar('\n');
 }
 
