@@ -1,6 +1,8 @@
 #ifndef __CONFIG_H__
 #define __CONFIG_H__
 
+#define MAX_MSG_LEN 64
+
 typedef struct
 {
 	int		threadStarted;
@@ -12,5 +14,7 @@ typedef struct
 	int	 	hdetails;
 
 } commonData;
+
+int printfd(char*, ...);
 
 #endif
