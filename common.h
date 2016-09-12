@@ -15,6 +15,6 @@ typedef struct
 
 } commonData;
 
-int printfd(char*, ...);
+int printfd(int, char*, ...);
 
 #endif

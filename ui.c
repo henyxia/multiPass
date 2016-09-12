@@ -106,6 +106,8 @@ void updateContent(commonData* uiconf)
 	fd_set			rfds;
 	struct termios	old = { 0 };
 	int				max;
+	char			buffer[MAX_MSG_LEN];
+	int				size;
 
 	// Setting the terminal properly
     if(tcgetattr(0, &old)<0)
@@ -127,11 +129,17 @@ void updateContent(commonData* uiconf)
 		FD_SET(STDIN_FILENO, &rfds);
 		FD_SET(uiconf->fd_status[0], &rfds);
 
-		select(1, &rfds, NULL, NULL, NULL);
+		select(max, &rfds, NULL, NULL, NULL);
 
 		if(FD_ISSET(uiconf->fd_status[0], &rfds))
 		{
-			printf("BLBLBLLBLB\n");
+			size = read(uiconf->fd_status[0], buffer, MAX_MSG_LEN);
+			printf("\x1b[%d;2H ", uiconf->hsize-1);
+			fflush(stdout);
+			write(1, buffer, size);
+
+			//write(1, buffer, size);
+			fflush(stdout);
 		}
 
 		FD_ZERO(&rfds);
