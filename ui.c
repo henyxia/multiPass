@@ -99,6 +99,14 @@ void drawUI(commonData* uiconf)
 	fflush(stdout);
 }
 
+void completeStatusBar(int max, int current)
+{
+	for(int i=current; i<(max-3); i++)
+	{
+		write(STDIN_FILENO, " ", 1);
+	}
+}
+
 void updateContent(commonData* uiconf)
 {
 	// Vars
@@ -136,10 +144,15 @@ void updateContent(commonData* uiconf)
 			size = read(uiconf->fd_status[0], buffer, MAX_MSG_LEN);
 			printf("\x1b[%d;2H ", uiconf->hsize-1);
 			fflush(stdout);
-			write(1, buffer, size);
-
-			//write(1, buffer, size);
+			write(STDOUT_FILENO, buffer, size);
+			completeStatusBar(uiconf->wsize, size);
+		}
+		else if(FD_ISSET(STDIN_FILENO, &rfds))
+		{
+			size = read(STDIN_FILENO, buffer, MAX_MSG_LEN);
+			printf("\x1b[%d;2H Stdin ? %c", uiconf->hsize-1, buffer[0]);
 			fflush(stdout);
+			completeStatusBar(uiconf->wsize, size+8);
 		}
 
 		FD_ZERO(&rfds);
