@@ -4,7 +4,7 @@
 CC=gcc
 CFLAGS=-c -Wall -Wextra -Werror -std=c99 -g
 LIBS=-lpthread
-SOURCES=main.c common.c ui.c
+SOURCES=main.c common.c ui.c config.c input.c
 OBJECTS=$(SOURCES:.c=.o)
 EXECUTABLE=multiPass
 
@@ -17,4 +17,4 @@ $(EXECUTABLE): $(OBJECTS)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clear:
-	rm $(OBJECTS) $(EXECUTABLE)
+	rm -f $(OBJECTS) $(EXECUTABLE)
