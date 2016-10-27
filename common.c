@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <unistd.h>
+#include <sys/ipc.h>
+#include <sys/sem.h>
+#include <sys/types.h>
 
 #include "common.h"
 
@@ -13,6 +16,12 @@ void initThreads(int);
 void PV(int, int);
 void P(int);
 void V(int);
+
+// Global
+int	mySem;
+
+// NEED TO BE REMOVED
+typedef unsigned short int ushort;
 
 // printfd
 int printfd(int fd, char* i_str, ...)
@@ -88,7 +97,7 @@ void init_sem(int N)
 	}
 }
 
-void initThreads(int sem)
+void initSemaphores(int sem)
 {
 	create_sem(sem);
 	init_sem(sem);

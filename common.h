@@ -8,6 +8,8 @@
 #define INPUT_TEXTOL	1
 #define INPUT_TEXTML	2
 
+#define KEY	0x1100
+
 typedef struct
 {
 	int		threadStarted;
