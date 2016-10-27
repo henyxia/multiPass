@@ -20,9 +20,6 @@ void V(int);
 // Global
 int	mySem;
 
-// NEED TO BE REMOVED
-typedef unsigned short int ushort;
-
 // printfd
 int printfd(int fd, char* i_str, ...)
 {
@@ -48,12 +45,12 @@ int printfd(int fd, char* i_str, ...)
 // Private functions
 int get_sem(int i)
 {
-	ushort semarr[30];
+	unsigned short int semarr[30];
 	union semun
 	{
 		int val;
 		struct semid_ds *buf;
-		ushort *array;
+		unsigned short int *array;
 	}arg;
 
 	arg.array = semarr;
@@ -86,7 +83,7 @@ void init_sem(int N)
 	{
 		int val;
 		struct semid_ds *buf;
-		ushort *array;
+		unsigned short int *array;
 	}arg;
 	arg.val = 1;
 	for (j=0; j<N; j++)
