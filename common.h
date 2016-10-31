@@ -3,12 +3,11 @@
 
 #define MAX_MSG_LEN 64
 
-#define INPUT_UNNK		-1
-#define INPUT_CMD		0
-#define INPUT_TEXTOL	1
-#define INPUT_TEXTML	2
-
-#define KEY	0x1100
+#define	INPUT			0
+#define OUTPUT_CMD		1
+#define OUTPUT_OL		2
+#define OUTPUT_ML		3
+#define	FD_MAX			4
 
 typedef struct
 {
@@ -24,5 +23,7 @@ typedef struct
 } commonData;
 
 int printfd(int, char*, ...);
+int lockOutput(int);
+int lockInput();
 
 #endif

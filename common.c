@@ -1,24 +1,25 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <unistd.h>
-#include <sys/ipc.h>
 #include <sys/sem.h>
-#include <sys/types.h>
 
 #include "common.h"
 
+#define KEY	0x1100
+
 // Private functions
-int get_sem(int);
-void show_sem(int);
-void create_sem(int);
-void init_sem(int);
-void initThreads(int);
-void PV(int, int);
-void P(int);
-void V(int);
+int 	get_sem(int);
+void 	show_sem(int);
+void 	create_sem(int);
+void 	init_sem(int);
+void 	initThreads(int);
+int 	PV(int, int);
+int 	P(int);
+int 	V(int);
 
 // Global
 int	mySem;
+int matchingFd[FD_MAX];
 
 // printfd
 int printfd(int fd, char* i_str, ...)
@@ -41,6 +42,20 @@ int printfd(int fd, char* i_str, ...)
 
 	return ret;
 }
+
+// lockOutput
+int lockOutput(int output)
+{
+	if(output != OUTPUT_CMD && output != OUTPUT_OL && output != OUTPUT_ML)
+	{
+		// Unrecognized output
+		return 1;
+	}
+
+	return P(output);
+}
+
+// lockInput
 
 // Private functions
 int get_sem(int i)
@@ -101,25 +116,22 @@ void initSemaphores(int sem)
 }
 
 
-void PV(int i, int act)
+int PV(int i, int act)
 {
 	struct sembuf op;
-	int retval;
 
 	op.sem_num = i;
-	op.sem_op = act; //1=V, -1=P
-	op.sem_flg = 0; //will wait
-	retval = semop(mySem, &op, 1);
-	if(retval != 0)
-		printf("Error semop will do %d\n", act);
+	op.sem_op = act; 	// 1=V, -1=P
+	op.sem_flg = 0; 	// Will wait
+	return semop(mySem, &op, 1);
 }
 
-void P(int i)
+int P(int i)
 {
-	PV(i, -1);
+	return PV(i, -1);
 }
 
-void V(int i)
+int V(int i)
 {
-	PV(i, 1);
+	return PV(i, 1);
 }
