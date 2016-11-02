@@ -22,6 +22,7 @@ typedef struct
 
 } commonData;
 
+int common_init();
 int printfd(int, char*, ...);
 
 #endif

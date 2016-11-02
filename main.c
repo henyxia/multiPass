@@ -23,6 +23,14 @@ int main(void)
 	}
 	comm->threadStarted = 0;
 
+	// Init Common
+	ret = common_init();
+	if(ret<0)
+	{
+		printf("Unable to initialize the common data\n");
+		return ret;
+	}
+
 	// Init UI
 	ret = ui_init(comm);
 	if(ret)

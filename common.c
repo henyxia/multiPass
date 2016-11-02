@@ -24,6 +24,14 @@ int 	V(int);
 int	mySem;
 int matchingFd[FD_MAX];
 
+int common_init()
+{
+	for(int i=0; i<FD_MAX; i++)
+		matchingFd[i]=-1;
+
+	return 0;
+}
+
 // printfd
 int printfd(int fd, char* i_str, ...)
 {
@@ -37,7 +45,7 @@ int printfd(int fd, char* i_str, ...)
 	semId = getSemFromFd(fd);
 	if(semId<0)
 	{
-		printf("Unable to get the semaphore from its fd\n");
+		fprintf(stderr, "Unable to get the semaphore from its fd\n");
 		return semId;
 	}
 	lockIO(semId);
