@@ -8,6 +8,9 @@
 #define KEY	0x1100
 
 // Private functions
+int 	lockIO(int);
+int 	unlockIO(int);
+int 	getSemFromFd(int);
 int 	get_sem(int);
 void 	show_sem(int);
 void 	create_sem(int);
@@ -24,12 +27,20 @@ int matchingFd[FD_MAX];
 // printfd
 int printfd(int fd, char* i_str, ...)
 {
-	int size, ret;
-	char o_str[MAX_MSG_LEN];
-	va_list ap;
+	va_list	ap;
+	char 	o_str[MAX_MSG_LEN];
+	int 	semId;
+	int 	size;
+	int 	ret;
 
 	// Locking the sem
-
+	semId = getSemFromFd(fd);
+	if(semId<0)
+	{
+		printf("Unable to get the semaphore from its fd\n");
+		return semId;
+	}
+	lockIO(semId);
 
 	// Rendering to str
 	size = vsnprintf(o_str, MAX_MSG_LEN, i_str, ap);
@@ -38,24 +49,43 @@ int printfd(int fd, char* i_str, ...)
 	ret = write(fd, o_str, size);
 
 	// Unlocking the sem
-
+	unlockIO(semId);
 
 	return ret;
 }
 
-// lockOutput
-int lockOutput(int output)
+int getSemFromFd(int fd)
 {
-	if(output != OUTPUT_CMD && output != OUTPUT_OL && output != OUTPUT_ML)
-	{
-		// Unrecognized output
-		return 1;
-	}
+	for(int i=0; i<FD_MAX; i++)
+		if(matchingFd[i] == fd)
+			return i;
 
-	return P(output);
+	return -1;
 }
 
-// lockInput
+// lockIO
+int lockIO(int io)
+{ 
+	if(io != INPUT && io != OUTPUT_CMD && io != OUTPUT_OL && io != OUTPUT_ML)
+	{
+		// Unrecognized io
+		return -1;
+	}
+
+	return P(io);
+}
+
+// unlockIO
+int unlockIO(int io)
+{
+	if(io != INPUT && io != OUTPUT_CMD && io != OUTPUT_OL && io != OUTPUT_ML)
+	{
+		// Unrecognized io
+		return -1;
+	}
+
+	return V(io);
+ }
 
 // Private functions
 int get_sem(int i)

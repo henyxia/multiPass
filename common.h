@@ -23,7 +23,5 @@ typedef struct
 } commonData;
 
 int printfd(int, char*, ...);
-int lockOutput(int);
-int lockInput();
 
 #endif
