@@ -8,6 +8,7 @@
 #define KEY	0x1100
 
 // Private functions
+void 	initSemaphores(int);
 int 	lockIO(int);
 int 	unlockIO(int);
 int 	getSemFromFd(int);
@@ -26,8 +27,12 @@ int matchingFd[FD_MAX];
 
 int common_init()
 {
+	initSemaphores(FD_MAX);
+
 	for(int i=0; i<FD_MAX; i++)
 		matchingFd[i]=-1;
+
+	matchingFd[OUTPUT_CMD]=4;
 
 	return 0;
 }
@@ -41,23 +46,32 @@ int printfd(int fd, char* i_str, ...)
 	int 	size;
 	int 	ret;
 
+	FILE* stdERR = fopen("error.log", "a+");
+	fprintf(stdERR, "------------------------------------\n");
+	fprintf(stdERR, "Going to print though fd(%d) message\n", fd);
+
 	// Locking the sem
 	semId = getSemFromFd(fd);
+	fprintf(stdERR, "Locking semaphore (%d)\n", semId);
 	if(semId<0)
 	{
-		fprintf(stderr, "Unable to get the semaphore from its fd\n");
+		fprintf(stdERR, "Unable to get the semaphore from its fd(%d)\n", fd);
 		return semId;
 	}
 	lockIO(semId);
 
 	// Rendering to str
 	size = vsnprintf(o_str, MAX_MSG_LEN, i_str, ap);
+	fprintf(stdERR, "Message is (size %d)\n-> %s\n", size, o_str);
 
 	// Writing the output
 	ret = write(fd, o_str, size);
 
 	// Unlocking the sem
+	fprintf(stdERR, "Unlocking semaphore (%d)\n", semId);
 	unlockIO(semId);
+
+	fclose(stdERR);
 
 	return ret;
 }
