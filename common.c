@@ -2,6 +2,7 @@
 #include <stdarg.h>
 #include <unistd.h>
 #include <sys/sem.h>
+#include <errno.h>
 
 #include "common.h"
 
@@ -66,6 +67,19 @@ int printfd(int fd, char* i_str, ...)
 
 	// Writing the output
 	ret = write(fd, o_str, size);
+	ret = write(fd, "\n", 1);
+
+	ret = fsync(fd);
+	fprintf(stdERR, "fsync ret: %d\n", ret);
+	int err = errno;
+	if(ret<0)
+		fprintf(stdERR, "errno ret: %d\n", err);
+
+	if(err == EBADF)
+		fprintf("BAD DESCRIPTOR\n");
+
+	// Flush
+	ret = fsync(fd);
 
 	// Unlocking the sem
 	fprintf(stdERR, "Unlocking semaphore (%d)\n", semId);
