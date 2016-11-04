@@ -31,20 +31,20 @@ int ui_init(commonData* comm)
 	return 0;
 }
 
-void* ui_thread(void* uiconf_raw)
+void* ui_thread(void* comm_raw)
 {
-	commonData* uiconf = uiconf_raw;
+	commonData* comm = comm_raw;
 
-	drawUI(uiconf);
+	drawUI(comm);
 
-	updateContent(uiconf);
+	updateContent(comm);
 
-	uiconf->threadStarted--;
+	comm->threadStarted--;
 
 	return NULL;
 }
 
-void drawUI(commonData* uiconf)
+void drawUI(commonData* comm)
 {
 	// Clear
 	printf("\x1b[?25l\x1b[2J\x1b[0H");
@@ -54,41 +54,41 @@ void drawUI(commonData* uiconf)
 
 	// First
 	printf("\u250C");
-	for(int i=1; i<(uiconf->wsize-1); i++)
+	for(int i=1; i<(comm->wsize-1); i++)
 		printf("\u2500");
 	printf("\u2510");
 	putchar('\n');
 
 	// Left
-	for(int i=1; i<(uiconf->hsize-1); i++)
+	for(int i=1; i<(comm->hsize-1); i++)
 		printf("\x1b[%d;1H\u2502", i+1);
 
 	// Right
-	for(int i=1; i<(uiconf->hsize-1); i++)
-		printf("\x1b[%d;%dH\u2502", i+1, uiconf->wsize);
+	for(int i=1; i<(comm->hsize-1); i++)
+		printf("\x1b[%d;%dH\u2502", i+1, comm->wsize);
 
 	// Top bar
 	printf("\x1b[4;0H\u251C");
-	for(int i=1; i<(uiconf->wsize-1); i++)
+	for(int i=1; i<(comm->wsize-1); i++)
 		printf("\x1b[4;%dH\u2500", i+1);
-	printf("\x1b[4;%dH\u2524", uiconf->wsize);
+	printf("\x1b[4;%dH\u2524", comm->wsize);
 
 	// Bottom bar
-	printf("\x1b[%d;0H\u251C", uiconf->hsize-2);
-	for(int i=1; i<(uiconf->wsize-1); i++)
-		printf("\x1b[%d;%dH\u2500", uiconf->hsize-2, i+1);
-	printf("\x1b[%d;%dH\u2524", uiconf->hsize-2, uiconf->wsize);
+	printf("\x1b[%d;0H\u251C", comm->hsize-2);
+	for(int i=1; i<(comm->wsize-1); i++)
+		printf("\x1b[%d;%dH\u2500", comm->hsize-2, i+1);
+	printf("\x1b[%d;%dH\u2524", comm->hsize-2, comm->wsize);
 
 	// Panel
-	printf("\x1b[4;%dH\u252C", uiconf->wpanel+1);
-	for(int i=4; i<(uiconf->hsize-3); i++)
-		printf("\x1b[%d;%dH\u2502", i+1, uiconf->wpanel+1);
-	printf("\x1b[%d;%dH\u2534", uiconf->hsize-2, uiconf->wpanel+1);
+	printf("\x1b[4;%dH\u252C", comm->wpanel+1);
+	for(int i=4; i<(comm->hsize-3); i++)
+		printf("\x1b[%d;%dH\u2502", i+1, comm->wpanel+1);
+	printf("\x1b[%d;%dH\u2534", comm->hsize-2, comm->wpanel+1);
 
 	// Last
-	printf("\x1b[%d;0H", uiconf->hsize);
+	printf("\x1b[%d;0H", comm->hsize);
 	printf("\u2514");
-	for(int i=1; i<(uiconf->wsize-1); i++)
+	for(int i=1; i<(comm->wsize-1); i++)
 		printf("\u2500");
 	printf("\u2518");
 
@@ -107,7 +107,7 @@ void completeStatusBar(int max, int current)
 	}
 }
 
-void updateContent(commonData* uiconf)
+void updateContent(commonData* comm)
 {
 	// Vars
 	bool			stop = false;
@@ -129,40 +129,40 @@ void updateContent(commonData* uiconf)
 
 	FD_ZERO(&rfds);
 	FD_SET(STDIN_FILENO, &rfds);
-	FD_SET(uiconf->fd_status[FD_STDIN], &rfds);
-	max = uiconf->fd_status[FD_STDIN] + 1;
+	FD_SET(comm->fd_status[FD_STDIN], &rfds);
+	max = comm->fd_status[FD_STDIN] + 1;
 
 	while(!stop)
 	{
 		FD_SET(STDIN_FILENO, &rfds);
-		FD_SET(uiconf->fd_status[FD_STDIN], &rfds);
+		FD_SET(comm->fd_status[FD_STDIN], &rfds);
 
 		select(max, &rfds, NULL, NULL, NULL);
 
-		if(FD_ISSET(uiconf->fd_status[FD_STDIN], &rfds))
+		if(FD_ISSET(comm->fd_status[FD_STDIN], &rfds))
 		{
 			// Reading
-			size = read(uiconf->fd_status[FD_STDIN], buffer, MAX_MSG_LEN);
+			size = read(comm->fd_status[FD_STDIN], buffer, MAX_MSG_LEN);
 
 			// Printing position (need to be improved)
-			printf("\x1b[%d;2H ", uiconf->hsize-1);
+			printf("\x1b[%d;2H ", comm->hsize-1);
 			fflush(stdout);
 
 			// Printing message
 			write(STDOUT_FILENO, buffer, size);
 
 			// Removing useless chars
-			completeStatusBar(uiconf->wsize, size);
+			completeStatusBar(comm->wsize, size);
 
 			// Writing ack
-			write(uiconf->fd_status[FD_ACK_STDOUT], "a", 1);
+			write(comm->fd_status[FD_ACK_STDOUT], "a", 1);
 		}
 		else if(FD_ISSET(STDIN_FILENO, &rfds))
 		{
 			size = read(STDIN_FILENO, buffer, MAX_MSG_LEN);
-			printf("\x1b[%d;2H Stdin ? %c", uiconf->hsize-1, buffer[0]);
+			printf("\x1b[%d;2H Stdin ? %c", comm->hsize-1, buffer[0]);
 			fflush(stdout);
-			completeStatusBar(uiconf->wsize, size+8);
+			completeStatusBar(comm->wsize, size+8);
 		}
 
 		FD_ZERO(&rfds);
