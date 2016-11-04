@@ -9,6 +9,7 @@
 
 int main(void)
 {
+	int			pipeTmp[2];
 	int			ret;
 	pthread_t	t_ui;
 	pthread_t	t_config;
@@ -46,6 +47,14 @@ int main(void)
 		printf("Unable to create status fd\n");
 		return ret;
 	}
+	ret = pipe(pipeTmp);
+	if(ret<0)
+	{
+		printf("Unable to create status ack fd\n");
+		return ret;
+	}
+	comm->fd_status[FD_ACK_STDIN] = pipeTmp[FD_STDIN];
+	comm->fd_status[FD_ACK_STDOUT] = pipeTmp[FD_STDOUT];
 
 	// Starting the UI thread
 	pthread_attr_t attr;
@@ -60,7 +69,7 @@ int main(void)
 	comm->threadStarted++;
 
 	// Sending the status
-	printfd(comm->fd_status[1], "UI thread successfully initialized");
+	printfd(comm->fd_status, "UI thread successfully initialized");
 
 	// Parsing the configuration
 	pthread_attr_t attr2;

@@ -38,7 +38,7 @@ void readConfig(commonData* comm)
 	//sleep(2);
 	if(config_file == NULL)
 	{
-		printfd(comm->fd_status[1], "Unable to open configuration file");
+		printfd(comm->fd_status, "Unable to open configuration file");
 	}
 
 	// Checking the mask (must be 0600)
@@ -51,7 +51,7 @@ void initConfiguration(commonData* comm)
 	FILE* config_file = fopen("~/.multiPass.rc", "w+");
 	if(config_file == NULL)
 	{
-		printfd(comm->fd_status[1], "Unable to open configuration file");
+		printfd(comm->fd_status, "Unable to open configuration file");
 	}
 
 	fprintf(config_file, "ui\n");

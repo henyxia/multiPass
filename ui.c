@@ -129,28 +129,30 @@ void updateContent(commonData* uiconf)
 
 	FD_ZERO(&rfds);
 	FD_SET(STDIN_FILENO, &rfds);
-	FD_SET(uiconf->fd_status[0], &rfds);
-	max = uiconf->fd_status[0] + 1;
+	FD_SET(uiconf->fd_status[FD_STDIN], &rfds);
+	max = uiconf->fd_status[FD_STDIN] + 1;
 
 	while(!stop)
 	{
 		FD_SET(STDIN_FILENO, &rfds);
-		FD_SET(uiconf->fd_status[0], &rfds);
+		FD_SET(uiconf->fd_status[FD_STDIN], &rfds);
 
 		select(max, &rfds, NULL, NULL, NULL);
 
-		if(FD_ISSET(uiconf->fd_status[0], &rfds))
+		if(FD_ISSET(uiconf->fd_status[FD_STDIN], &rfds))
 		{
 			FILE* stdERR = fopen("error2.log", "a+");
 			fprintf(stdERR, "----------------------\n");
 			fprintf(stdERR, "Writing to stdout\n");
-			size = read(uiconf->fd_status[0], buffer, MAX_MSG_LEN);
+			size = read(uiconf->fd_status[FD_STDIN], buffer, MAX_MSG_LEN);
 			fprintf(stdERR, "Size is %d\n-> %s\n", size, buffer);
 			printf("\x1b[%d;2H ", uiconf->hsize-1);
 			fflush(stdout);
 			write(STDOUT_FILENO, buffer, size);
 			completeStatusBar(uiconf->wsize, size);
 			fclose(stdERR);
+			// Writing ack
+			write(uiconf->fd_status[FD_ACK_STDOUT], "a", 1);
 		}
 		else if(FD_ISSET(STDIN_FILENO, &rfds))
 		{

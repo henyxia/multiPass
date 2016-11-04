@@ -39,9 +39,10 @@ int common_init()
 }
 
 // printfd
-int printfd(int fd, char* i_str, ...)
+int printfd(int* fds, char* i_str, ...)
 {
 	va_list	ap;
+	char	dc[MAX_ACK_LEN];
 	char 	o_str[MAX_MSG_LEN];
 	int 	semId;
 	int 	size;
@@ -49,14 +50,14 @@ int printfd(int fd, char* i_str, ...)
 
 	FILE* stdERR = fopen("error.log", "a+");
 	fprintf(stdERR, "------------------------------------\n");
-	fprintf(stdERR, "Going to print though fd(%d) message\n", fd);
+	fprintf(stdERR, "Going to print though fd(%d) message\n", fds[FD_STDOUT]);
 
 	// Locking the sem
-	semId = getSemFromFd(fd);
+	semId = getSemFromFd(fds[FD_STDOUT]);
 	fprintf(stdERR, "Locking semaphore (%d)\n", semId);
 	if(semId<0)
 	{
-		fprintf(stdERR, "Unable to get the semaphore from its fd(%d)\n", fd);
+		fprintf(stdERR, "Unable to get the semaphore\n");
 		return semId;
 	}
 	lockIO(semId);
@@ -66,24 +67,10 @@ int printfd(int fd, char* i_str, ...)
 	fprintf(stdERR, "Message is (size %d)\n-> %s\n", size, o_str);
 
 	// Writing the output
-	ret = write(fd, o_str, size);
-	ret = write(fd, "\n", 1);
+	ret = write(fds[FD_STDOUT], o_str, size);
 
-	ret = fsync(fd);
-	fprintf(stdERR, "fsync ret: %d\n", ret);
-	int err = errno;
-	if(ret<0)
-		fprintf(stdERR, "errno ret: %d\n", err);
-
-	if(err == EBADF)
-		fprintf(stdERR, "BAD DESCRIPTOR\n");
-	if(err == EIO)
-		fprintf(stdERR, "ERROR DURING SYNCHRONIZATION\n");
-	if(err == EROFS || err == EINVAL)
-		fprintf(stdERR, "SYNCHONIZATION NOT AVAILABLE\n");
-
-	// Flush
-	ret = fsync(fd);
+	// Waiting for the ack
+	read(fds[FD_ACK_STDIN], dc, MAX_ACK_LEN);
 
 	// Unlocking the sem
 	fprintf(stdERR, "Unlocking semaphore (%d)\n", semId);
