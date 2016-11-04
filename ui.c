@@ -141,16 +141,19 @@ void updateContent(commonData* uiconf)
 
 		if(FD_ISSET(uiconf->fd_status[FD_STDIN], &rfds))
 		{
-			FILE* stdERR = fopen("error2.log", "a+");
-			fprintf(stdERR, "----------------------\n");
-			fprintf(stdERR, "Writing to stdout\n");
+			// Reading
 			size = read(uiconf->fd_status[FD_STDIN], buffer, MAX_MSG_LEN);
-			fprintf(stdERR, "Size is %d\n-> %s\n", size, buffer);
+
+			// Printing position (need to be improved)
 			printf("\x1b[%d;2H ", uiconf->hsize-1);
 			fflush(stdout);
+
+			// Printing message
 			write(STDOUT_FILENO, buffer, size);
+
+			// Removing useless chars
 			completeStatusBar(uiconf->wsize, size);
-			fclose(stdERR);
+
 			// Writing ack
 			write(uiconf->fd_status[FD_ACK_STDOUT], "a", 1);
 		}
