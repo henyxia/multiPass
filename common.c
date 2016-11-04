@@ -76,7 +76,11 @@ int printfd(int fd, char* i_str, ...)
 		fprintf(stdERR, "errno ret: %d\n", err);
 
 	if(err == EBADF)
-		fprintf("BAD DESCRIPTOR\n");
+		fprintf(stdERR, "BAD DESCRIPTOR\n");
+	if(err == EIO)
+		fprintf(stdERR, "ERROR DURING SYNCHRONIZATION\n");
+	if(err == EROFS || err == EINVAL)
+		fprintf(stdERR, "SYNCHONIZATION NOT AVAILABLE\n");
 
 	// Flush
 	ret = fsync(fd);
