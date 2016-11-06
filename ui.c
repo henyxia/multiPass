@@ -112,29 +112,16 @@ void updateContent(commonData* comm)
 	// Vars
 	bool			stop = false;
 	fd_set			rfds;
-	struct termios	old = { 0 };
 	int				max;
 	char			buffer[MAX_MSG_LEN];
 	int				size;
 
-	// Setting the terminal properly
-    if(tcgetattr(0, &old)<0)
-        perror("tcsetattr()");
-    old.c_lflag&=~ICANON;
-   	old.c_lflag &= ~ECHO;
-    old.c_cc[VMIN]=1;
-    old.c_cc[VTIME]=0;
-    if(tcsetattr(0, TCSANOW, &old)<0)
-        perror("tcsetattr ICANON");
-
 	FD_ZERO(&rfds);
-	FD_SET(STDIN_FILENO, &rfds);
 	FD_SET(comm->fd_status[FD_STDIN], &rfds);
 	max = comm->fd_status[FD_STDIN] + 1;
 
 	while(!stop)
 	{
-		FD_SET(STDIN_FILENO, &rfds);
 		FD_SET(comm->fd_status[FD_STDIN], &rfds);
 
 		select(max, &rfds, NULL, NULL, NULL);
@@ -157,12 +144,10 @@ void updateContent(commonData* comm)
 			// Writing ack
 			write(comm->fd_status[FD_ACK_STDOUT], "a", 1);
 		}
-		else if(FD_ISSET(STDIN_FILENO, &rfds))
+		else
 		{
-			size = read(STDIN_FILENO, buffer, MAX_MSG_LEN);
-			printf("\x1b[%d;2H Stdin ? %c", comm->hsize-1, buffer[0]);
-			fflush(stdout);
-			completeStatusBar(comm->wsize, size+8);
+			// WTF ? We should never be here
+			fprintf(stderr, "PANIC... Unexpected behavior in UI thread\n");
 		}
 
 		FD_ZERO(&rfds);

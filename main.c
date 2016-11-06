@@ -4,15 +4,17 @@
 #include <pthread.h>
 
 #include "common.h"
-#include "ui.h"
 #include "config.h"
+#include "input.h"
+#include "ui.h"
 
 int main(void)
 {
 	int			pipeTmp[2];
 	int			ret;
-	pthread_t	t_ui;
 	pthread_t	t_config;
+	pthread_t	t_input;
+	pthread_t	t_ui;
 
 	// Creating the common data
 	commonData* comm = NULL;
@@ -70,6 +72,43 @@ int main(void)
 
 	// Sending the status
 	printfd(comm->fd_status, "UI thread successfully initialized");
+
+
+
+	// Init UI
+	ret = input_init();
+	if(ret)
+	{
+		printf("Unable to init the input properly\n");
+		return ret;
+	}
+
+	// Starting the input thread
+	pthread_attr_t attr_input;
+	pthread_attr_init(&attr_input);
+	pthread_attr_setdetachstate(&attr_input, PTHREAD_CREATE_DETACHED);
+	ret = pthread_create(&t_input, &attr_input, input_thread, comm);
+	if(ret)
+	{
+		printf("Unable to create the UI thread\n");
+		return ret;
+	}
+	comm->threadStarted++;
+
+	// Sending the status
+	printfd(comm->fd_status, "UI thread successfully initialized");
+
+
+
+
+
+
+
+
+
+
+
+
 
 	// Parsing the configuration
 	pthread_attr_t attr2;

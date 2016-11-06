@@ -12,6 +12,26 @@
 void inputProcess(commonData*);
 
 // Public function
+int input_init(void)
+{
+	struct termios	old = { 0 };
+    int ret;
+
+ 	// Setting the terminal properly
+    if(tcgetattr(0, &old)<0)
+        perror("tcsetattr()");
+    old.c_lflag&=~ICANON;
+   	old.c_lflag &= ~ECHO;
+    old.c_cc[VMIN]=1;
+    old.c_cc[VTIME]=0;
+
+    ret = tcsetattr(0, TCSANOW, &old);
+    if(ret<0)
+        perror("tcsetattr ICANON");
+
+    return ret;
+}
+
 void* input_thread(void* comm_raw)
 {
 	commonData* comm = comm_raw;
@@ -28,20 +48,9 @@ void inputProcess(commonData* comm)
 	// Vars
 	bool			stop = false;
 	fd_set			rfds;
-	struct termios	old = { 0 };
 	int				max;
 	char			buffer[MAX_MSG_LEN];
 	int				size;
-
-	// Setting the terminal properly
-    if(tcgetattr(0, &old)<0)
-        perror("tcsetattr()");
-    old.c_lflag&=~ICANON;
-   	old.c_lflag &= ~ECHO;
-    old.c_cc[VMIN]=1;
-    old.c_cc[VTIME]=0;
-    if(tcsetattr(0, TCSANOW, &old)<0)
-        perror("tcsetattr ICANON");
 
 	FD_ZERO(&rfds);
 	FD_SET(STDIN_FILENO, &rfds);
@@ -65,7 +74,7 @@ void inputProcess(commonData* comm)
 		else
 		{
 			// WTF ? We should never be here
-			fprintf(stderr, "PANIC... Unexpected behavior\n");
+			fprintf(stderr, "PANIC... Unexpected behavior in INPUT thread\n");
 		}
 
 		FD_ZERO(&rfds);
