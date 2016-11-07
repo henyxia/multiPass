@@ -52,6 +52,9 @@ int printfd(int* fds, char* i_str, ...)
 	fprintf(stdERR, "------------------------------------\n");
 	fprintf(stdERR, "Going to print though fd(%d) message\n", fds[FD_STDOUT]);
 
+	// Getting the va
+	va_start(ap, i_str);
+
 	// Locking the sem
 	semId = getSemFromFd(fds[FD_STDOUT]);
 	fprintf(stdERR, "Locking semaphore (%d)\n", semId);

@@ -96,7 +96,7 @@ int main(void)
 	comm->threadStarted++;
 
 	// Sending the status
-	printfd(comm->fd_status, "UI thread successfully initialized");
+	printfd(comm->fd_status, "Input thread successfully initialized");
 
 
 
