@@ -65,12 +65,8 @@ void inputProcess(commonData* comm)
 		if(FD_ISSET(STDIN_FILENO, &rfds))
 		{
 			size = read(STDIN_FILENO, buffer, MAX_MSG_LEN);
-			//printfd(comm->fd_status, "Input len");
 			buffer[size] = 0;
-			printfd(comm->fd_status, "> lol %c", buffer[0]);
-			//printf("\x1b[%d;2H Stdin ? %c", comm->hsize-1, buffer[0]);
-			//fflush(stdout);
-			//completeStatusBar(comm->wsize, size+8);
+			printfd(comm->fd_status, "Input > %c", buffer[0]);
 		}
 		else
 		{
