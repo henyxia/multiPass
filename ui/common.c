@@ -2,7 +2,7 @@
 
 #include "common.h"
 
-void* switchToUI(int);
+void switchToUI(int);
 
 void init_ui_common(commonData* comm)
 {
@@ -24,9 +24,8 @@ void delete_ui_input_command(ui_input_command* old)
 }
 
 // Private function
-void* switchToUI(int ui)
+void switchToUI(int ui)
 {
-	void* tmp = ui;
-	tmp = NULL;
-	return tmp;
+	ui++;
+	return;
 }

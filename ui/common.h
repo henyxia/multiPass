@@ -5,6 +5,8 @@
 
 #define UI_NOTHING	0
 
+#include "../common.h"
+
 typedef struct
 {
 	char			command;
@@ -12,6 +14,7 @@ typedef struct
 	unsigned int 	length;
 } ui_input_command;
 
+void				init_ui_common(commonData*);
 ui_input_command* 	create_ui_input_command(int);
 void				delete_ui_input_command(ui_input_command*);
 
