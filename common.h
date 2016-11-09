@@ -26,6 +26,8 @@ typedef struct
 	int 	wpanel;
 	int	 	hdetails;
 
+	void(* switchToUI) (int);
+
 } commonData;
 
 int common_init();

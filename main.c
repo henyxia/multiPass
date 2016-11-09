@@ -98,18 +98,6 @@ int main(void)
 	// Sending the status
 	printfd(comm->fd_status, "Input thread successfully initialized");
 
-
-
-
-
-
-
-
-
-
-
-
-
 	// Parsing the configuration
 	pthread_attr_t attr2;
 	pthread_attr_init(&attr2);

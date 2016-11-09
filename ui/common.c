@@ -2,6 +2,13 @@
 
 #include "common.h"
 
+void* switchToUI(int);
+
+void init_ui_common(commonData* comm)
+{
+	comm->switchToUI = switchToUI;
+};
+
 ui_input_command* create_ui_input_command(int size)
 {
 	ui_input_command* ret = NULL;
@@ -14,4 +21,12 @@ ui_input_command* create_ui_input_command(int size)
 void delete_ui_input_command(ui_input_command* old)
 {
 	free(old);
+}
+
+// Private function
+void* switchToUI(int ui)
+{
+	void* tmp = ui;
+	tmp = NULL;
+	return tmp;
 }

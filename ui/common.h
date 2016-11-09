@@ -3,6 +3,8 @@
 
 #define MAX_COMMAND_DESCRIPTION	32
 
+#define UI_NOTHING	0
+
 typedef struct
 {
 	char			command;
