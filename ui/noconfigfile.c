@@ -23,5 +23,6 @@ ui_input_command* noconfigfile_init()
 int noconfigfile_render(commonData* comm)
 {
 	printfd(comm->fd_status, "Loading no config file found prompt");
+	createMultipleOption(comm, "Would you like to create a new configuration file ?", "Yep !");
 	return 0;
 }

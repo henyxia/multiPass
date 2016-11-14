@@ -50,7 +50,7 @@ void drawUI(commonData* comm)
 	printf("\x1b[?25l\x1b[2J\x1b[0H");
 
 	// Coloring
-	printf("\x1b[37;44m");
+	//printf("\x1b[37;44m");
 
 	// First
 	printf("\u250C");

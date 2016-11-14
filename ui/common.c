@@ -28,6 +28,11 @@ void delete_ui_input_command(ui_input_command* old)
 	free(old);
 }
 
+void createMultipleOption(commonData* comm, char* title, ...)
+{
+	printfd(comm->fd_status, title);
+}
+
 // Private function
 void switchToUI(int ui)
 {
