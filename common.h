@@ -20,6 +20,7 @@ typedef struct commonData
 	int		threadStarted;
 	int		fd_input[4];
 	int		fd_status[4];
+	int		fd_uicontrol[4];
 
 	int		hsize;
 	int 	wsize;

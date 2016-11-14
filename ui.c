@@ -144,6 +144,25 @@ void updateContent(commonData* comm)
 			// Writing ack
 			write(comm->fd_status[FD_ACK_STDOUT], "a", 1);
 		}
+		else if(FD_ISSET(comm->fd_uicontrol[FD_STDIN], &rfds))
+		{
+			// Reading
+			size = read(comm->fd_uicontrol[FD_STDIN], buffer, MAX_MSG_LEN);
+
+			// Printing position (need to be improved)
+			printf("\x1b[%d;2H ", comm->hsize-1);
+			fflush(stdout);
+
+			// Printing message
+			write(STDOUT_FILENO, buffer, size);
+
+			// Removing useless chars
+			completeStatusBar(comm->wsize, size);
+
+			// Writing ack
+			write(comm->fd_uicontrol[FD_ACK_STDOUT], "a", 1);
+		}
+
 		else
 		{
 			// WTF ? We should never be here
