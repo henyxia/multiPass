@@ -3,7 +3,8 @@
 
 #define MAX_COMMAND_DESCRIPTION	32
 
-#define UI_NOTHING	0
+#define UI_NOTHING		0
+#define	UI_NOCONFIGFILE	1
 
 #include "../common.h"
 

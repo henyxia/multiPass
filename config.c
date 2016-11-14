@@ -38,7 +38,7 @@ void readConfig(commonData* comm)
 	if(config_file == NULL)
 	{
 		printfd(comm->fd_status, "Unable to open configuration file");
-		comm->switchToUI(UI_NOTHING);
+		comm->switchToUI(UI_NOCONFIGFILE);
 		return;
 	}
 

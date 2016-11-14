@@ -1,11 +1,16 @@
 #include <stdlib.h>
 
 #include "common.h"
+#include "nothing.h"
+#include "noconfigfile.h"
+
+commonData* _internal_ui_comm;
 
 void switchToUI(int);
 
 void init_ui_common(commonData* comm)
 {
+	_internal_ui_comm = comm;
 	comm->switchToUI = switchToUI;
 };
 
@@ -26,6 +31,15 @@ void delete_ui_input_command(ui_input_command* old)
 // Private function
 void switchToUI(int ui)
 {
+	switch(ui)
+	{
+		case UI_NOTHING:
+		break;
+		case UI_NOCONFIGFILE:
+			noconfigfile_init();
+			noconfigfile_render(_internal_ui_comm);
+		break;
+	}
 	ui++;
 	return;
 }

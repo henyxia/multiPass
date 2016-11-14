@@ -15,7 +15,7 @@
 #define FD_ACK_STDIN	2
 #define FD_ACK_STDOUT	3
 
-typedef struct
+typedef struct commonData
 {
 	int		threadStarted;
 	int		fd_input[4];
