@@ -83,10 +83,10 @@ void drawUI(commonData* comm)
 	// Panel
 	if(comm->sidebar)
 	{
-	printf("\x1b[4;%dH\u252C", comm->wpanel+1);
-	for(int i=4; i<(comm->hsize-3); i++)
-		printf("\x1b[%d;%dH\u2502", i+1, comm->wpanel+1);
-	printf("\x1b[%d;%dH\u2534", comm->hsize-2, comm->wpanel+1);
+		printf("\x1b[4;%dH\u252C", comm->wpanel+1);
+		for(int i=4; i<(comm->hsize-3); i++)
+			printf("\x1b[%d;%dH\u2502", i+1, comm->wpanel+1);
+		printf("\x1b[%d;%dH\u2534", comm->hsize-2, comm->wpanel+1);
 	}
 
 	// Last
@@ -174,12 +174,15 @@ void updateContent(commonData* comm)
 				switch(buffer[0])
 				{
 					case CLEAR_SCREEN:
+						drawUI(comm);
 					break;
 					case SIDEBAR_TOGGLE_OFF:
 						comm->sidebar = 0;
+						drawUI(comm);
 					break;
 					case SIDEBAR_TOGGLE_ON:
 						comm->sidebar = 1;
+						drawUI(comm);
 					break;
 				}
 			}
