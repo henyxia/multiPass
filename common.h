@@ -15,12 +15,19 @@
 #define FD_ACK_STDIN	2
 #define FD_ACK_STDOUT	3
 
+#define CLEAR_SCREEN		0
+#define SIDEBAR_TOGGLE_OFF	1
+#define SIDEBAR_TOGGLE_ON	2
+
+
 typedef struct commonData
 {
 	int		threadStarted;
 	int		fd_input[4];
 	int		fd_status[4];
 	int		fd_uicontrol[4];
+
+	int		sidebar;
 
 	int		hsize;
 	int 	wsize;

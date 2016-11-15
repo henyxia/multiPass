@@ -27,6 +27,7 @@ int ui_init(commonData* comm)
 	comm->hsize	= w.ws_row;
 	comm->wsize	= w.ws_col;
 	comm->wpanel = 25;
+	comm->sidebar = 0;
 
 	return 0;
 }
@@ -80,10 +81,13 @@ void drawUI(commonData* comm)
 	printf("\x1b[%d;%dH\u2524", comm->hsize-2, comm->wsize);
 
 	// Panel
+	if(comm->sidebar)
+	{
 	printf("\x1b[4;%dH\u252C", comm->wpanel+1);
 	for(int i=4; i<(comm->hsize-3); i++)
 		printf("\x1b[%d;%dH\u2502", i+1, comm->wpanel+1);
 	printf("\x1b[%d;%dH\u2534", comm->hsize-2, comm->wpanel+1);
+	}
 
 	// Last
 	printf("\x1b[%d;0H", comm->hsize);
@@ -149,20 +153,37 @@ void updateContent(commonData* comm)
 			// Reading
 			size = read(comm->fd_uicontrol[FD_STDIN], buffer, MAX_MSG_LEN);
 
-			// Printing position (need to be improved)
-			printf("\x1b[%d;2H ", comm->hsize-1);
-			fflush(stdout);
+			if(size != 1)
+			{
+				// Printing position (need to be improved)
+				printf("\x1b[%d;2H ", comm->hsize-1);
+				fflush(stdout);
 
-			// Printing message
-			write(STDOUT_FILENO, buffer, size);
+				// Printing message
+				write(STDOUT_FILENO, "Incorrect message received", 26);
 
-			// Removing useless chars
-			completeStatusBar(comm->wsize, size);
+				// Removing useless chars
+				completeStatusBar(comm->wsize, size);
 
-			// Writing ack
-			write(comm->fd_uicontrol[FD_ACK_STDOUT], "a", 1);
+				// Writing ack
+				write(comm->fd_uicontrol[FD_ACK_STDOUT], "a", 1);
+			}
+			else
+			{
+				// Processing
+				switch(buffer[0])
+				{
+					case CLEAR_SCREEN:
+					break;
+					case SIDEBAR_TOGGLE_OFF:
+						comm->sidebar = 0;
+					break;
+					case SIDEBAR_TOGGLE_ON:
+						comm->sidebar = 1;
+					break;
+				}
+			}
 		}
-
 		else
 		{
 			// WTF ? We should never be here
