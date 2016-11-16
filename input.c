@@ -68,7 +68,7 @@ void inputProcess(commonData* comm)
 			buffer[size] = 0;
 			if(buffer[0] == 'l')
 			{
-				printfd(comm->fd_uicontrol, "%d", CLEAR_SCREEN);
+				printfd(comm->fd_uicontrol, "2", CLEAR_SCREEN);
 			}
 			else
 			{

@@ -24,16 +24,14 @@ int 	V(int);
 
 // Global
 int	mySem;
-int matchingFd[FD_MAX];
+int matchingFd[FDS_MAX];
 
 int common_init()
 {
-	initSemaphores(FD_MAX);
+	initSemaphores(FDS_MAX);
 
-	for(int i=0; i<FD_MAX; i++)
+	for(int i=0; i<FDS_MAX; i++)
 		matchingFd[i]=-1;
-
-	matchingFd[OUTPUT_CMD]=4;
 
 	return 0;
 }
@@ -89,10 +87,13 @@ int printfd(int* fds, char* i_str, ...)
 	return ret;
 }
 
-int initFds(int* fds)
+int initFds(int io, int* fds)
 {
 	int ret;
 	int pipeTmp[2];
+
+	if(io <= FDS_MIN || io >= FDS_MAX)
+		return -1;
 
 	// Init the two first fd
 	ret = pipe(fds);
@@ -114,12 +115,15 @@ int initFds(int* fds)
 	fds[FD_ACK_STDIN] = pipeTmp[FD_STDIN];
 	fds[FD_ACK_STDOUT] = pipeTmp[FD_STDOUT];
 
+	// Keeping for the sem
+	matchingFd[io]=fds[FD_STDOUT];
+
 	return 0;
 }
 
 int getSemFromFd(int fd)
 {
-	for(int i=0; i<FD_MAX; i++)
+	for(int i=0; i<FDS_MAX; i++)
 		if(matchingFd[i] == fd)
 			return i;
 
@@ -129,11 +133,9 @@ int getSemFromFd(int fd)
 // lockIO
 int lockIO(int io)
 { 
-	if(io != INPUT && io != OUTPUT_CMD && io != OUTPUT_OL && io != OUTPUT_ML)
-	{
+	if(io <= FDS_MIN || io >= FDS_MAX)
 		// Unrecognized io
 		return -1;
-	}
 
 	return P(io);
 }
@@ -141,11 +143,9 @@ int lockIO(int io)
 // unlockIO
 int unlockIO(int io)
 {
-	if(io != INPUT && io != OUTPUT_CMD && io != OUTPUT_OL && io != OUTPUT_ML)
-	{
+	if(io <= FDS_MIN || io >= FDS_MAX)
 		// Unrecognized io
 		return -1;
-	}
 
 	return V(io);
  }

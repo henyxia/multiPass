@@ -14,9 +14,9 @@
 #define FD_ACK_STDIN	2
 #define FD_ACK_STDOUT	3
 
-#define CLEAR_SCREEN		0
-#define SIDEBAR_TOGGLE_OFF	1
-#define SIDEBAR_TOGGLE_ON	2
+#define CLEAR_SCREEN		'0'
+#define SIDEBAR_TOGGLE_OFF	'1'
+#define SIDEBAR_TOGGLE_ON	'2'
 
 
 typedef struct commonData
@@ -39,6 +39,6 @@ typedef struct commonData
 
 int common_init();
 int printfd(int*, char*, ...);
-int initFds(int *);
+int initFds(int, int *);
 
 #endif

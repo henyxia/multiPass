@@ -42,10 +42,18 @@ int main(void)
 	}
 
 	// Init status fd
-	ret = initFds(comm->fd_status);
+	ret = initFds(FDS_STATUS, comm->fd_status);
 	if(ret<0)
 	{
 		printf("Unable to create status fd\n");
+		return ret;
+	}
+
+	// Init iocontrol fd
+	ret = initFds(FDS_UICONTROL, comm->fd_uicontrol);
+	if(ret<0)
+	{
+		printf("Unable to create uicontrol fd\n");
 		return ret;
 	}
 

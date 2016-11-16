@@ -122,11 +122,14 @@ void updateContent(commonData* comm)
 
 	FD_ZERO(&rfds);
 	FD_SET(comm->fd_status[FD_STDIN], &rfds);
-	max = comm->fd_status[FD_STDIN] + 1;
+	FD_SET(comm->fd_uicontrol[FD_STDIN], &rfds);
+
+	max = comm->fd_uicontrol[FD_STDIN] + 1;
 
 	while(!stop)
 	{
 		FD_SET(comm->fd_status[FD_STDIN], &rfds);
+		FD_SET(comm->fd_uicontrol[FD_STDIN], &rfds);
 
 		select(max, &rfds, NULL, NULL, NULL);
 
