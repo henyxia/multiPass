@@ -4,11 +4,10 @@
 #define MAX_MSG_LEN 64
 #define MAX_ACK_LEN 2
 
-#define	INPUT			0
-#define OUTPUT_CMD		1
-#define OUTPUT_OL		2
-#define OUTPUT_ML		3
-#define	FD_MAX			4
+#define FDS_MIN			0
+#define FDS_STATUS		1
+#define FDS_UICONTROL	2
+#define	FDS_MAX			3
 
 #define FD_STDIN		0
 #define	FD_STDOUT		1
@@ -40,5 +39,6 @@ typedef struct commonData
 
 int common_init();
 int printfd(int*, char*, ...);
+int initFds(int *);
 
 #endif

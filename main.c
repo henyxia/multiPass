@@ -10,7 +10,6 @@
 
 int main(void)
 {
-	int			pipeTmp[2];
 	int			ret;
 	pthread_t	t_config;
 	pthread_t	t_input;
@@ -43,20 +42,12 @@ int main(void)
 	}
 
 	// Init status fd
-	ret = pipe(comm->fd_status);
+	ret = initFds(comm->fd_status);
 	if(ret<0)
 	{
 		printf("Unable to create status fd\n");
 		return ret;
 	}
-	ret = pipe(pipeTmp);
-	if(ret<0)
-	{
-		printf("Unable to create status ack fd\n");
-		return ret;
-	}
-	comm->fd_status[FD_ACK_STDIN] = pipeTmp[FD_STDIN];
-	comm->fd_status[FD_ACK_STDOUT] = pipeTmp[FD_STDOUT];
 
 	// Starting the UI thread
 	pthread_attr_t attr;

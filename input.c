@@ -66,7 +66,14 @@ void inputProcess(commonData* comm)
 		{
 			size = read(STDIN_FILENO, buffer, MAX_MSG_LEN);
 			buffer[size] = 0;
-			printfd(comm->fd_status, "Input > %c", buffer[0]);
+			if(buffer[0] == 'l')
+			{
+				printfd(comm->fd_uicontrol, "%d", CLEAR_SCREEN);
+			}
+			else
+			{
+				printfd(comm->fd_status, "Input > %c", buffer[0]);
+			}
 		}
 		else
 		{

@@ -30,7 +30,7 @@ void delete_ui_input_command(ui_input_command* old)
 
 void createMultipleOption(commonData* comm, char* title, ...)
 {
-	printfd(comm->fd_status, title);
+	printfd(comm->fd_uicontrol, title);
 }
 
 // Private function

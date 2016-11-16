@@ -49,6 +49,11 @@ int printfd(int* fds, char* i_str, ...)
 	int 	ret;
 
 	FILE* stdERR = fopen("error.log", "a+");
+	if(stdERR == NULL)
+	{
+		fprintf(stderr, "Unable to open stderr file");
+		return -1;
+	}
 	fprintf(stdERR, "------------------------------------\n");
 	fprintf(stdERR, "Going to print though fd(%d) message\n", fds[FD_STDOUT]);
 
@@ -82,6 +87,34 @@ int printfd(int* fds, char* i_str, ...)
 	fclose(stdERR);
 
 	return ret;
+}
+
+int initFds(int* fds)
+{
+	int ret;
+	int pipeTmp[2];
+
+	// Init the two first fd
+	ret = pipe(fds);
+	if(ret<0)
+	{
+		printf("\nUnable to create fd\n");
+		return ret;
+	}
+
+	// Then the next two
+	ret = pipe(pipeTmp);
+	if(ret<0)
+	{
+		printf("Unable to create ack fd\n");
+		return ret;
+	}
+
+	// Storing
+	fds[FD_ACK_STDIN] = pipeTmp[FD_STDIN];
+	fds[FD_ACK_STDOUT] = pipeTmp[FD_STDOUT];
+
+	return 0;
 }
 
 int getSemFromFd(int fd)
