@@ -27,7 +27,7 @@ int ui_init(commonData* comm)
 	comm->hsize	= w.ws_row;
 	comm->wsize	= w.ws_col;
 	comm->wpanel = 25;
-	comm->sidebar = 0;
+	comm->sidebar = 1;
 
 	return 0;
 }
