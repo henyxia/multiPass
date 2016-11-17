@@ -7,7 +7,8 @@
 #define FDS_MIN			0
 #define FDS_STATUS		1
 #define FDS_UICONTROL	2
-#define	FDS_MAX			3
+#define FDS_CONTENT		3
+#define	FDS_MAX			4
 
 #define FD_STDIN		0
 #define	FD_STDOUT		1
@@ -25,6 +26,7 @@ typedef struct commonData
 	int		fd_input[4];
 	int		fd_status[4];
 	int		fd_uicontrol[4];
+	int		fd_content[4];
 
 	int		sidebar;
 

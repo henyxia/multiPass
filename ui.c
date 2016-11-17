@@ -123,13 +123,15 @@ void updateContent(commonData* comm)
 	FD_ZERO(&rfds);
 	FD_SET(comm->fd_status[FD_STDIN], &rfds);
 	FD_SET(comm->fd_uicontrol[FD_STDIN], &rfds);
+	FD_SET(comm->fd_content[FD_STDIN], &rfds);
 
-	max = comm->fd_uicontrol[FD_STDIN] + 1;
+	max = comm->fd_content[FD_STDIN] + 1;
 
 	while(!stop)
 	{
 		FD_SET(comm->fd_status[FD_STDIN], &rfds);
 		FD_SET(comm->fd_uicontrol[FD_STDIN], &rfds);
+		FD_SET(comm->fd_content[FD_STDIN], &rfds);
 
 		select(max, &rfds, NULL, NULL, NULL);
 
@@ -189,6 +191,11 @@ void updateContent(commonData* comm)
 					break;
 				}
 			}
+		}
+		else if(FD_ISSET(comm->fd_content[FD_STDIN], &rfds))
+		{
+			// Reading
+			size = read(comm->fd_content[FD_STDIN], buffer, MAX_MSG_LEN);
 		}
 		else
 		{

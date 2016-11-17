@@ -57,6 +57,14 @@ int main(void)
 		return ret;
 	}
 
+	// Init content fd
+	ret = initFds(FDS_CONTENT, comm->fd_content);
+	if(ret<0)
+	{
+		printf("Unable to create content fd\n");
+		return ret;
+	}
+
 	// Starting the UI thread
 	pthread_attr_t attr;
 	pthread_attr_init(&attr);

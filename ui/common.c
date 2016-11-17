@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 
 #include "common.h"
@@ -30,7 +31,18 @@ void delete_ui_input_command(ui_input_command* old)
 
 void createMultipleOption(commonData* comm, char* title, ...)
 {
-	printfd(comm->fd_uicontrol, title);
+	//va_list	ap;
+	//int 	height 	= 8;
+	//int 	width	= 4;
+
+	char	line1[MAX_MSG_LEN];
+	char	line2[MAX_MSG_LEN];
+	char	line3[MAX_MSG_LEN];
+
+	sprintf(line1, "+---+");
+	sprintf(line2, " %s ", title);
+	sprintf(line3, "+---+");
+	printfd(comm->fd_content, title);
 }
 
 // Private function
