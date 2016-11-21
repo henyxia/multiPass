@@ -190,6 +190,9 @@ void updateContent(commonData* comm)
 						drawUI(comm);
 					break;
 				}
+
+				// Writing ack
+				write(comm->fd_uicontrol[FD_ACK_STDOUT], "a", 1);
 			}
 		}
 		else if(FD_ISSET(comm->fd_content[FD_STDIN], &rfds))
