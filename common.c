@@ -8,6 +8,12 @@
 
 #define KEY	0x1100
 
+#ifdef DEBUG
+FILE* stdERR;
+int init_errorlog(void);
+int print_errorlog(char*, ...);
+#endif
+
 // Private functions
 void 	initSemaphores(int);
 int 	lockIO(int);
@@ -28,6 +34,7 @@ int matchingFd[FDS_MAX];
 
 int common_init()
 {
+	init_errorlog();
 	initSemaphores(FDS_MAX);
 
 	for(int i=0; i<FDS_MAX; i++)
@@ -46,14 +53,9 @@ int printfd(int* fds, char* i_str, ...)
 	int 	size;
 	int 	ret;
 
-	FILE* stdERR = fopen("error.log", "a+");
-	if(stdERR == NULL)
-	{
-		fprintf(stderr, "Unable to open stderr file");
-		return -1;
-	}
 	fprintf(stdERR, "------------------------------------\n");
 	fprintf(stdERR, "Going to print though fd(%d) message\n", fds[FD_STDOUT]);
+	fflush(stdERR);
 
 	// Getting the va
 	va_start(ap, i_str);
@@ -61,9 +63,11 @@ int printfd(int* fds, char* i_str, ...)
 	// Locking the sem
 	semId = getSemFromFd(fds[FD_STDOUT]);
 	fprintf(stdERR, "Locking semaphore (%d)\n", semId);
+	fflush(stdERR);
 	if(semId<0)
 	{
 		fprintf(stdERR, "Unable to get the semaphore\n");
+		fflush(stdERR);
 		return semId;
 	}
 	lockIO(semId);
@@ -71,6 +75,7 @@ int printfd(int* fds, char* i_str, ...)
 	// Rendering to str
 	size = vsnprintf(o_str, MAX_MSG_LEN, i_str, ap);
 	fprintf(stdERR, "Message is (size %d)\n-> %s\n", size, o_str);
+	fflush(stdERR);
 
 	// Writing the output
 	ret = write(fds[FD_STDOUT], o_str, size);
@@ -80,6 +85,7 @@ int printfd(int* fds, char* i_str, ...)
 
 	// Unlocking the sem
 	fprintf(stdERR, "Unlocking semaphore (%d)\n", semId);
+	fflush(stdERR);
 	unlockIO(semId);
 
 	fclose(stdERR);
@@ -128,6 +134,30 @@ int getSemFromFd(int fd)
 			return i;
 
 	return -1;
+}
+
+// init_errorlog
+int init_errorlog(void)
+{
+	stdERR = fopen("error.log", "a+");
+	if(stdERR==NULL)
+	{
+		print_errorlog("Unable to open stderr file");
+		return -1;
+	}
+
+	return 0;
+}
+
+int print_errorlog(char* str, ...)
+{
+	va_list ap;
+	int		ret;
+	
+	ret = vfprintf(stdERR, str, ap);
+	fflush(stdERR);
+
+	return ret;
 }
 
 // lockIO
