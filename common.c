@@ -12,6 +12,7 @@
 FILE* stdERR;
 int init_errorlog(void);
 int print_errorlog(char*, ...);
+#else
 #endif
 
 // Private functions
@@ -34,7 +35,18 @@ int matchingFd[FDS_MAX];
 
 int common_init()
 {
-	init_errorlog();
+#ifdef DEBUG
+	int ret;
+
+	ret = init_errorlog();
+	if(ret<0)
+	{
+		fprintf(stderr, "Unable to start error log\n");
+		fflush(stdout);
+		return ret;
+	}
+#endif
+
 	initSemaphores(FDS_MAX);
 
 	for(int i=0; i<FDS_MAX; i++)
@@ -53,29 +65,25 @@ int printfd(int* fds, char* i_str, ...)
 	int 	size;
 	int 	ret;
 
-	fprintf(stdERR, "------------------------------------\n");
-	fprintf(stdERR, "Going to print though fd(%d) message\n", fds[FD_STDOUT]);
-	fflush(stdERR);
+	print_errorlog("------------------------------------\n");
+	print_errorlog("Going to print though fd(%d) message\n", fds[FD_STDOUT]);
 
 	// Getting the va
 	va_start(ap, i_str);
 
 	// Locking the sem
 	semId = getSemFromFd(fds[FD_STDOUT]);
-	fprintf(stdERR, "Locking semaphore (%d)\n", semId);
-	fflush(stdERR);
+	print_errorlog("Locking semaphore (%d)\n", semId);
 	if(semId<0)
 	{
-		fprintf(stdERR, "Unable to get the semaphore\n");
-		fflush(stdERR);
+		print_errorlog("Unable to get the semaphore\n");
 		return semId;
 	}
 	lockIO(semId);
 
 	// Rendering to str
 	size = vsnprintf(o_str, MAX_MSG_LEN, i_str, ap);
-	fprintf(stdERR, "Message is (size %d)\n-> %s\n", size, o_str);
-	fflush(stdERR);
+	print_errorlog("Message is (size %d)\n-> %s\n", size, o_str);
 
 	// Writing the output
 	ret = write(fds[FD_STDOUT], o_str, size);
@@ -84,11 +92,8 @@ int printfd(int* fds, char* i_str, ...)
 	read(fds[FD_ACK_STDIN], dc, MAX_ACK_LEN);
 
 	// Unlocking the sem
-	fprintf(stdERR, "Unlocking semaphore (%d)\n", semId);
-	fflush(stdERR);
+	print_errorlog("Unlocking semaphore (%d)\n", semId);
 	unlockIO(semId);
-
-	fclose(stdERR);
 
 	return ret;
 }
@@ -142,9 +147,11 @@ int init_errorlog(void)
 	stdERR = fopen("error.log", "a+");
 	if(stdERR==NULL)
 	{
-		print_errorlog("Unable to open stderr file");
+		fprintf(stderr, "Unable to open stderr file");
 		return -1;
 	}
+
+	print_errorlog("\n=== STARTING ===\n\n");
 
 	return 0;
 }
@@ -153,7 +160,10 @@ int print_errorlog(char* str, ...)
 {
 	va_list ap;
 	int		ret;
-	
+
+	// Getting the va
+	va_start(ap, str);
+
 	ret = vfprintf(stdERR, str, ap);
 	fflush(stdERR);
 
@@ -206,7 +216,7 @@ void show_sem(int i)
 void create_sem(int N)
 {
 #ifdef DEBUG
-	printf("Creating %d semaphores\n", N);
+	print_errorlog("Creating %d semaphores\n", N);
 #endif
 	mySem = semget(KEY, N, 0666 | IPC_CREAT);
 	if(mySem < 0)
