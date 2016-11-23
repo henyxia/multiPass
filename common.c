@@ -13,6 +13,11 @@ FILE* stdERR;
 int init_errorlog(void);
 int print_errorlog(char*, ...);
 #else
+int print_errorlog(char* i, ...)
+{
+	i[0] = 0;
+	return i[0];
+}
 #endif
 
 // Private functions
@@ -141,6 +146,7 @@ int getSemFromFd(int fd)
 	return -1;
 }
 
+#ifdef DEBUG
 // init_errorlog
 int init_errorlog(void)
 {
@@ -169,7 +175,7 @@ int print_errorlog(char* str, ...)
 
 	return ret;
 }
-
+#endif
 // lockIO
 int lockIO(int io)
 { 
