@@ -15,8 +15,10 @@ int print_errorlog(char*, ...);
 #else
 int print_errorlog(char* i, ...)
 {
-	i[0] = 0;
-	return i[0];
+	char tmp;
+	tmp = i[0];
+	tmp = 0;
+	return tmp;
 }
 #endif
 
