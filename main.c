@@ -83,7 +83,7 @@ int main(void)
 
 
 	// Init UI
-	ret = input_init();
+	ret = input_init(comm);
 	if(ret)
 	{
 		printf("Unable to init the input properly\n");

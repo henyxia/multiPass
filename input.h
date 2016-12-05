@@ -3,7 +3,7 @@
 
 #include "common.h"
 
-int     input_init(void);
+int     input_init(commonData*);
 void*	input_thread(void*);
 
 #endif

@@ -7,12 +7,13 @@
 #include <sys/select.h>
 
 #include "input.h"
+#include "keymap.h"
 
 // Private function
 void inputProcess(commonData*);
 
 // Public function
-int input_init(void)
+int input_init(commonData* comm)
 {
 	struct termios	old = { 0 };
     int ret;
@@ -28,6 +29,18 @@ int input_init(void)
     ret = tcsetattr(0, TCSANOW, &old);
     if(ret<0)
         perror("tcsetattr ICANON");
+
+	// Malloc
+	comm->keymap = (char*) malloc(sizeof(char)*MAX_KEYMAP);
+	if(comm->keymap == NULL)
+	{
+		fprintf(stderr, "Keymap not allocated\n");
+		fflush(stdout);
+		return -1;
+	}
+
+	// Feed the keymap with default configuration
+	keymap_default_config(comm->keymap);
 
     return ret;
 }
@@ -66,13 +79,21 @@ void inputProcess(commonData* comm)
 		{
 			size = read(STDIN_FILENO, buffer, MAX_MSG_LEN);
 			buffer[size] = 0;
-			if(buffer[0] == 'l')
+
+			switch(buffer[0])
 			{
-				printfd(comm->fd_uicontrol, "2", CLEAR_SCREEN);
-			}
-			else
-			{
-				printfd(comm->fd_status, "Input > %c", buffer[0]);
+				case 0x0C:
+					printfd(comm->fd_uicontrol, "%d", CLEAR_SCREEN);
+					break;
+				case 0x0A:
+					printfd(comm->fd_uicontrol, "%d", SIDEBAR_TOGGLE_OFF);
+					break;
+				case 0x10:
+					printfd(comm->fd_uicontrol, "%d", SIDEBAR_TOGGLE_ON);
+					break;
+				default:
+					printfd(comm->fd_status, "Input %c > [%d] %02X %02X", buffer[0], size, buffer[0], buffer[1]);
+					break;
 			}
 		}
 		else
