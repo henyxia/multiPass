@@ -1,11 +1,11 @@
 #include "keymap.h"
 
-void keymap_default_config(char* keymap)
+void keymap_default_config(keymap* k)
 {
-	keymap[REFRESH] 		= 'l';
-	keymap[SIDEBAR_ON]		= 'o';
-	keymap[SIDEBAR_OFF]		= 'p';
-	keymap[SIDEBAR_SWITCH]	= 'i';
-	keymap[QUIT]			= 'q';
+	k[REFRESH].map 			= 'l';
+	k[SIDEBAR_ON].map		= 'o';
+	k[SIDEBAR_OFF].map		= 'p';
+	k[SIDEBAR_SWITCH].map	= 'i';
+	k[QUIT].map				= 'q';
 
 }

@@ -1,6 +1,8 @@
 #ifndef __COMMON_H__
 #define __COMMON_H__
 
+#include "keymap.h"
+
 #define MAX_MSG_LEN 64
 #define MAX_ACK_LEN 2
 
@@ -35,7 +37,7 @@ typedef struct commonData
 	int 	wpanel;
 	int	 	hdetails;
 
-	char*	keymap;
+	keymap*	keys;
 
 	void(* switchToUI) (int);
 

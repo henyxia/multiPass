@@ -31,8 +31,8 @@ int input_init(commonData* comm)
         perror("tcsetattr ICANON");
 
 	// Malloc
-	comm->keymap = (char*) malloc(sizeof(char)*MAX_KEYMAP);
-	if(comm->keymap == NULL)
+	comm->keys = (keymap*) malloc(sizeof(keymap)*MAX_KEYMAP);
+	if(comm->keys == NULL)
 	{
 		fprintf(stderr, "Keymap not allocated\n");
 		fflush(stdout);
@@ -40,7 +40,7 @@ int input_init(commonData* comm)
 	}
 
 	// Feed the keymap with default configuration
-	keymap_default_config(comm->keymap);
+	keymap_default_config(comm->keys);
 
     return ret;
 }

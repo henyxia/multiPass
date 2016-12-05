@@ -20,8 +20,9 @@ typedef struct
 	bool	isCtrl;
 	bool	isAlt;
 	bool	isShift;
+	bool	isDisplayed;
 } keymap;
 
-void keymap_default_config(char*);
+void keymap_default_config(keymap*);
 
 #endif
