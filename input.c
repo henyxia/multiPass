@@ -6,8 +6,18 @@
 #include <sys/ioctl.h>
 #include <sys/select.h>
 
-#include "input.h"
+
+#include <fcntl.h>
+#include <linux/input.h>
+
+static const  char *const evval[3] = {
+	"RELEASED",
+	"PRESSED",
+	"REPEATED"
+};
+
 #include "keymap.h"
+#include "input.h"
 
 // Private function
 void inputProcess(commonData*);
@@ -58,6 +68,22 @@ void* input_thread(void* comm_raw)
 
 void inputProcess(commonData* comm)
 {
+	// New flavor
+	//ssize_t n;
+	struct input_event ev;
+	int fd = open("/dev/input/by-path/platform-i8042-serio-0-event-kbd", O_RDONLY);
+	if(fd<0)
+	{
+		return;
+	}
+
+	while(1)
+	{
+		//n = read(fd, &ev, sizeof ev);
+		read(fd, &ev, sizeof ev);
+		printf("%s 0x%04x (%d)\n",  evval[ev.value], (int)ev.code, (int)ev.code);
+	}
+
 	// Vars
 	bool			stop = false;
 	fd_set			rfds;

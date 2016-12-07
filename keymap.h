@@ -13,7 +13,7 @@
 
 #define MAX_KEYMAP_DESCRIPTION	16
 
-typedef struct
+typedef struct keymap
 {
 	char	cmd;
 	char	desc[MAX_KEYMAP_DESCRIPTION];
