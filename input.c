@@ -81,7 +81,8 @@ void inputProcess(commonData* comm)
 	{
 		//n = read(fd, &ev, sizeof ev);
 		read(fd, &ev, sizeof ev);
-		printf("%s 0x%04x (%d)\n",  evval[ev.value], (int)ev.code, (int)ev.code);
+		//printf("%s 0x%04x (%d)\n",  evval[ev.value], (int)ev.code, (int)ev.code);
+		printf("0x%04x (%d)\n",  (int)ev.code, (int)ev.code);
 	}
 
 	// Vars
