@@ -92,7 +92,7 @@ void inputProcess(commonData* comm)
 					printfd(comm->fd_uicontrol, "%d", SIDEBAR_TOGGLE_ON);
 					break;
 				default:
-					printfd(comm->fd_status, "Input %c > [%d] %02X %02X", buffer[0], size, buffer[0], buffer[1]);
+					printfd(comm->fd_status, "Input %c > [%d] %02X %02X %02X", buffer[0], size, buffer[0], buffer[1], size > 2 ? buffer[2] : '0');
 					break;
 			}
 		}

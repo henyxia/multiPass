@@ -35,13 +35,18 @@ void createMultipleOption(commonData* comm, char* title, ...)
 	//int 	height 	= 8;
 	//int 	width	= 4;
 
+	int 	maxLength = 0;
+
 	char	line1[MAX_MSG_LEN];
 	char	line2[MAX_MSG_LEN];
 	char	line3[MAX_MSG_LEN];
 
+	maxLength = strlen(title);
+
 	sprintf(line1, "+---+");
 	sprintf(line2, " %s ", title);
 	sprintf(line3, "+---+");
+
 	printfd(comm->fd_content, title);
 }
 
