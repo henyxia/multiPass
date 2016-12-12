@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "common.h"
 #include "nothing.h"
@@ -29,25 +30,47 @@ void delete_ui_input_command(ui_input_command* old)
 	free(old);
 }
 
+char* _generateBar(int len)
+{
+	char* out = NULL;
+
+	out = (char*) malloc(sizeof(char)*(len+1));
+	if(out == NULL)
+	{
+		return NULL;
+	}
+
+	for(int i=0;i<len;i++)
+		out[i] = '-';
+	out[len] = 0;
+
+	return out;
+}
+
 void createMultipleOption(commonData* comm, char* title, ...)
 {
 	//va_list	ap;
-	//int 	height 	= 8;
-	//int 	width	= 4;
+	int 	height 	= 8;
+	int 	width	= 3;
 
 	int 	maxLength = 0;
 
+	char	conf[MAX_MSG_LEN];
 	char	line1[MAX_MSG_LEN];
 	char	line2[MAX_MSG_LEN];
 	char	line3[MAX_MSG_LEN];
 
 	maxLength = strlen(title);
 
-	sprintf(line1, "+---+");
+	sprintf(conf, "%d,%d", height, width);
+	sprintf(line1, "+-%s-+", _generateBar(maxLength));
 	sprintf(line2, " %s ", title);
-	sprintf(line3, "+---+");
+	sprintf(line3, "+-%s-+", _generateBar(maxLength));
 
-	printfd(comm->fd_content, title);
+	printfd(comm->fd_content, conf);
+	printfd(comm->fd_content, line1);
+	printfd(comm->fd_content, line2);
+	printfd(comm->fd_content, line3);
 }
 
 // Private function

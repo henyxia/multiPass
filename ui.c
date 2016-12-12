@@ -114,11 +114,14 @@ void completeStatusBar(int max, int current)
 void updateContent(commonData* comm)
 {
 	// Vars
-	bool			stop = false;
-	fd_set			rfds;
-	int				max;
-	char			buffer[MAX_MSG_LEN];
-	int				size;
+	bool	stop = false;
+	fd_set	rfds;
+	int		max;
+	char	buffer[MAX_MSG_LEN];
+	int		size;
+	int		cmd_current = 0;
+	int		cmd_height = 0;
+	int		cmd_width = 0;
 
 	FD_ZERO(&rfds);
 	FD_SET(comm->fd_status[FD_STDIN], &rfds);
@@ -199,6 +202,22 @@ void updateContent(commonData* comm)
 		{
 			// Reading
 			size = read(comm->fd_content[FD_STDIN], buffer, MAX_MSG_LEN);
+
+			fprintf(stderr, "RECEIVED !\n");
+
+			if(cmd_current==0)
+			{
+				sscanf(buffer, "%d,%d", &cmd_height, &cmd_width);
+			}
+			else
+			{
+				// Going to the right place
+				printf("\x1b[2;4Hbite");
+				fflush(stdout);
+			}
+
+			// Writing ack
+			write(comm->fd_status[FD_ACK_STDOUT], "a", 1);
 		}
 		else
 		{
