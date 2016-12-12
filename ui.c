@@ -202,22 +202,23 @@ void updateContent(commonData* comm)
 		{
 			// Reading
 			size = read(comm->fd_content[FD_STDIN], buffer, MAX_MSG_LEN);
-
-			fprintf(stderr, "RECEIVED !\n");
+			buffer[size] = 0;
 
 			if(cmd_current==0)
 			{
 				sscanf(buffer, "%d,%d", &cmd_height, &cmd_width);
+				cmd_current = cmd_height;
 			}
 			else
 			{
 				// Going to the right place
-				printf("\x1b[2;4Hbite");
+				printf("\x1b[%d;12H%s", 12 + cmd_height - cmd_current, buffer);
 				fflush(stdout);
+				cmd_current--;
 			}
 
 			// Writing ack
-			write(comm->fd_status[FD_ACK_STDOUT], "a", 1);
+			write(comm->fd_content[FD_ACK_STDOUT], "a", 1);
 		}
 		else
 		{
