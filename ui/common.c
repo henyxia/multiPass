@@ -56,24 +56,35 @@ void createMultipleOption(commonData* comm, char* title, ...)
 	int 	maxLength = 0;
 
 	char	conf[MAX_MSG_LEN];
-	char	line1[MAX_MSG_LEN];
-	char	line2[MAX_MSG_LEN];
-	char	line3[MAX_MSG_LEN];
-	char	line5[MAX_MSG_LEN];
+	char	line[MAX_MSG_LEN];
 
 	maxLength = strlen(title);
 
+	// Conf
 	sprintf(conf, "%d,%d", height, width);
-	sprintf(line1, "+-%s-+", _generateBar(maxLength));
-	sprintf(line2, "| %s |", title);
-	sprintf(line3, "+-%s-+", _generateBar(maxLength));
-	sprintf(line5, "+-%s-+", _generateBar(maxLength));
-
 	printfd(comm->fd_content, conf);
-	printfd(comm->fd_content, line1);
-	printfd(comm->fd_content, line2);
-	printfd(comm->fd_content, line3);
-	printfd(comm->fd_content, line5);
+
+	// Line 1
+	sprintf(line, "+-%s-+", _generateBar(maxLength));
+	printfd(comm->fd_content, line);
+
+	// Line 2
+	sprintf(line, "| %s |", title);
+	printfd(comm->fd_content, line);
+
+	// Line 3
+	sprintf(line, "+-%s-+", _generateBar(maxLength));
+	printfd(comm->fd_content, line);
+
+	// Line 4
+	va_start(ap, title);
+	while(*title)
+	{
+	}
+
+	// Line 5
+	sprintf(line, "+-%s-+", _generateBar(maxLength));
+	printfd(comm->fd_content, line);
 }
 
 // Private function
