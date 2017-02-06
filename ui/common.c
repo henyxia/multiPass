@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
 #include <string.h>
 
 #include "common.h"
@@ -49,7 +50,7 @@ char* _generateBar(int len)
 
 void createMultipleOption(commonData* comm, char* title, ...)
 {
-	//va_list	ap;
+	va_list	ap;
 	int 	height 	= 8;
 	int 	width	= 3;
 
