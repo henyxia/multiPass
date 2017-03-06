@@ -54,6 +54,8 @@ void createMultipleOption(commonData* comm, char* title, ...)
 	int 	height 	= 8;
 	int 	width	= 3;
 
+	int options = 0;
+
 	int 	maxLength = 0;
 
 	char	conf[MAX_MSG_LEN];
@@ -81,7 +83,10 @@ void createMultipleOption(commonData* comm, char* title, ...)
 	va_start(ap, title);
 	while(*title)
 	{
+		options++;
 	}
+	sprintf(line, "| Found %d options |", options);
+	printfd(comm->fd_content, line);
 
 	// Line 5
 	sprintf(line, "+-%s-+", _generateBar(maxLength));
